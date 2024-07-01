@@ -30,8 +30,8 @@ int lista_procura(lista_t*lista, int elemento) {
     while(inicio <= fim) {
         meio = (inicio + fim)/2;
         if(elemento == lista->elementos[meio]) return meio;
-        if (elemento>lista->elementos[meio]) inicio = meio;
-        else fim = meio;
+        if (elemento>lista->elementos[meio]) inicio = meio + 1;
+        else fim = meio - 1;
     }
     return -1;
 }

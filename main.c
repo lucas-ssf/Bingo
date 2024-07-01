@@ -6,11 +6,12 @@
 struct cartelas {
     char*id;
     lista_t*elementos;
+    int qtd_sorteados;
 };
 
 int main(void) {
     struct cartelas cartela[100];
-    lista_t*lista_cartelas = lista_cria(),*lista_sorteados = lista_cria();
+    lista_t*lista_cartelas_sorteadas = lista_cria(),*lista_elementos_sorteados = lista_cria();
     char*opcoes[] = {"Entre com o numero de cartelas: ", "Entre com o numero de elementos por cartela (max. 60): "};
     char*respostas[2];
     respostas[0] = malloc(sizeof(char)*3);
@@ -28,6 +29,7 @@ int main(void) {
     for(int i = 0; i < numero_cartelas; i++) {
         cartela[i].id = malloc(sizeof(char)*64);
         cartela[i].elementos = lista_cria();
+        cartela[i].qtd_sorteados = 0;
         lista_t*lista_elementos = cartela[i].elementos;
         if(cartela[i].id == NULL||lista_elementos == NULL) return 1;
 
@@ -54,6 +56,37 @@ int main(void) {
             if(j != numero_elementos - 1) printf(", ");
         }
         printf("]\n");
+    }
+    printf("\nPressione Enter...");
+    getchar();
+
+    int i = 0;
+    while(1) {
+        printf("\nPartida %d:\nNumeros sorteados: [", i);
+        for(int j = 0; j < lista_elementos_sorteados->quantidade; j++) {
+            printf("%d", lista_elementos_sorteados->elementos[j]);
+            if(j != lista_elementos_sorteados->quantidade-1) printf(", ");
+        }
+        printf("]\n");
+
+        for(int j = 0; j < lista_cartelas_sorteadas->quantidade; j++) {
+            struct cartelas cartela_sorteada = cartela[lista_cartelas_sorteadas->elementos[j]];
+            printf("BINGO >> Cartela %s\n", cartela_sorteada.id);
+        }
+
+        printf("Digite o numero soretado: ");
+        int sorteado;
+        scanf("%d", &sorteado);
+        lista_adiciona(lista_elementos_sorteados,sorteado);
+
+        for(int j = 0; j < numero_cartelas; j++) {
+            lista_t*lista_elementos = cartela[j].elementos;
+            if(lista_procura(lista_elementos, sorteado) >= 0) cartela[j].qtd_sorteados++;
+            if(cartela[j].qtd_sorteados == numero_elementos)
+                if(lista_procura(lista_cartelas_sorteadas, j) < 0)
+                    lista_adiciona(lista_cartelas_sorteadas, j);
+        }
+        i++;
     }
 
     return 0;
